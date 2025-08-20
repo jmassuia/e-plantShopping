@@ -7,31 +7,52 @@ const CartItem = ({ onContinueShopping }) => {
   const cart = useSelector(state => state.cart.items);
   const dispatch = useDispatch();
 
-  // Calculate total amount for all products in the cart
-  const calculateTotalAmount = () => {
- 
-  };
+// Calculate total amount for all products in the cart
+const calculateTotalAmount = () => {
+    let total = 0;
+    cart.forEach(item => {
+        const unit = parseFloat(item.cost.toString().substring(1)); // e.g. "$15" -> 15
+        const qty = item.quantity || 0;
+        if (!isNaN(unit)) {
+        total += unit * qty;
+        }
+    });
+    return total.toFixed(2);
+    };
 
-  const handleContinueShopping = (e) => {
-   
-  };
+    const handleContinueShopping = (e) => {
+    onContinueShopping(e);
+    };
 
+    const handleCheckoutShopping = (e) => {
+    alert('Functionality to be added for future reference');
+    };
 
+    const handleIncrement = (item) => {
+    dispatch(updateQuantity({ name: item.name, quantity: item.quantity + 1 }));
+    };
 
-  const handleIncrement = (item) => {
-  };
+    const handleDecrement = (item) => {
+    if (item.quantity > 1) {
+        dispatch(updateQuantity({ name: item.name, quantity: item.quantity - 1 }));
+    } else {
+        // quantity would drop to 0 -> remove the item
+        dispatch(removeItem(item.name));
+    }
+    };
 
-  const handleDecrement = (item) => {
-   
-  };
+    const handleRemove = (item) => {
+    dispatch(removeItem(item.name));
+    };
 
-  const handleRemove = (item) => {
-  };
-
-  // Calculate total cost based on quantity for an item
-  const calculateTotalCost = (item) => {
-  };
-
+    // Calculate total cost based on quantity for an item
+    const calculateTotalCost = (item) => {
+    const unit = parseFloat(item.cost.toString().substring(1));
+    const qty = item.quantity || 0;
+    if (isNaN(unit)) return '0.00';
+    return (unit * qty).toFixed(2);
+    };
+    
   return (
     <div className="cart-container">
       <h2 style={{ color: 'black' }}>Total Cart Amount: ${calculateTotalAmount()}</h2>
@@ -57,7 +78,7 @@ const CartItem = ({ onContinueShopping }) => {
       <div className="continue_shopping_btn">
         <button className="get-started-button" onClick={(e) => handleContinueShopping(e)}>Continue Shopping</button>
         <br />
-        <button className="get-started-button1">Checkout</button>
+        <button className="get-started-button1" onClick={(e) => handleCheckoutShopping}>Checkout</button>
       </div>
     </div>
   );
